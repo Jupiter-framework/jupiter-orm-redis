@@ -1,0 +1,29 @@
+{
+  "name": "jupiter-orm-redis",
+  "version": "0.0.1",
+  "description": "## API",
+  "main": "index.js",
+  "scripts": {
+    "test": "mocha"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/zoilorys/jupiter-orm-redis.git"
+  },
+  "author": "Zoilorys <zoilorys@gmail.com>",
+  "license": "MIT",
+  "bugs": {
+    "url": "https://github.com/zoilorys/jupiter-orm-redis/issues"
+  },
+  "homepage": "https://github.com/zoilorys/jupiter-orm-redis#readme",
+  "devDependencies": {
+    "babel": "^5.8.9",
+    "chai": "^3.2.0",
+    "mocha": "^2.2.5"
+  },
+  "dependencies": {
+    "es6-promise": "^2.3.0",
+    "ramda": "^0.17.1",
+    "redis": "^0.12.1"
+  }
+}
