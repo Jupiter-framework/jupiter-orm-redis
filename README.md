@@ -1,5 +1,7 @@
 # jupiter-orm-redis
 
+[![Build Status](https://travis-ci.org/Jupiter-framework/jupiter-orm-redis.svg)](https://travis-ci.org/Jupiter-framework/jupiter-orm-redis)
+
 ## API
 
 #### .Fabric(options);
