@@ -1,6 +1,6 @@
 {
   "name": "jupiter-orm-redis",
-  "version": "0.1.15",
+  "version": "0.1.16",
   "description": "## API",
   "main": "index.js",
   "directories": {
