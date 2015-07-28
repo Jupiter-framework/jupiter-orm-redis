@@ -1,6 +1,8 @@
 # jupiter-orm-redis
 
 [![Build Status](https://travis-ci.org/Jupiter-framework/jupiter-orm-redis.svg)](https://travis-ci.org/Jupiter-framework/jupiter-orm-redis)
+[![Code Climate](https://codeclimate.com/github/Jupiter-framework/jupiter-orm-redis/badges/gpa.svg)](https://codeclimate.com/github/Jupiter-framework/jupiter-orm-redis)
+[![Coverage Status](https://coveralls.io/repos/Jupiter-framework/jupiter-orm-redis/badge.svg?branch=master&service=github)](https://coveralls.io/github/Jupiter-framework/jupiter-orm-redis?branch=master)
 
 ## API
 
