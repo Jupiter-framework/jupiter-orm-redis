@@ -1,15 +1,8 @@
 {
   "name": "jupiter-orm-redis",
-<<<<<<< HEAD
-  "version": "0.1.14",
-=======
-  "version": "0.1.16",
->>>>>>> 6ff03728fecf32e216f46e80089533dcb341f73b
+  "version": "0.1.18",
   "description": "## API",
   "main": "index.js",
-  "directories": {
-    "test": "tests"
-  },
   "scripts": {
     "test": "./node_modules/.bin/mocha --recursive --require babel/register",
     "watch": "./node_modules/.bin/mocha --recursive --require babel/register --watch"
