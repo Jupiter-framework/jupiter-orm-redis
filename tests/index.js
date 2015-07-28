@@ -51,6 +51,15 @@ describe('Redis ORM', function() {
     });
   });
 
+  it('exec() should return Promise', function() {
+    const promise = Fabric({
+      port: 6379,
+      host: 'localhost',
+    }).connect().select(1).query().get('test').exec();
+
+    expect(promise.then).to.be.ok.and.to.be.a('function');
+  });
+
   describe('Queue manipulation API', function() {
     it('get() and set() functions should add queries to the queue', function() {
       const query = Fabric({}).query();
