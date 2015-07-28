@@ -1,11 +1,26 @@
 
 import { Promise } from 'es6-promise';
-import { createClient } from 'redis';
 import { partialRight } from 'ramda';
+import { createClient } from 'redis';
 
-function QueryFabric(connection) {
+function queryFabric(connection) {
   const queue = [];
   const query = {};
+  const resultSet = [];
+
+  function getSet() {
+    return resultSet;
+  }
+
+  function pushToSet(item) {
+    getSet().push(item);
+    return true;
+  }
+
+  const addQuery = partialRight(function(newQuery, queryQueue) {
+    queryQueue.push(newQuery);
+    return true;
+  }, queue);
 
   query.set = function(key, value) {
     addQuery(['set', key, value]);
@@ -18,21 +33,43 @@ function QueryFabric(connection) {
   };
 
   query.exec = function() {
-    queue.reduce(function(sequence, queueItem) {
-      sequence.then(function() {
+    return queue.reduce(function(sequence, queueItem) {
+      return sequence.then(function() {
         const method = queueItem[0];
+
         queueItem.shift();
-        connection[method].apply(connection, queueItem);
+
+        if (typeof queueItem[queueItem.length - 1] !== 'function') {
+          Promise.resolve(
+            connection[method].apply(connection, queueItem)
+          );
+        }
+
+        return new Promise(function(resolve, reject) {
+          queueItem[queueItem.length - 1] = function (err, reply) {
+            if (err) {
+              return reject(err);
+            }
+
+            return resolve(reply);
+          };
+
+          Promise.resolve(
+            connection[method].apply(connection, queueItem)
+          );
+        });
+
       });
     }, Promise.resolve(null));
   };
 
   query.getQueue = function() {
-
+    return queue;
   };
 
   query.clearQueue = function() {
-
+    this.getQueue().length = 0;
+    return true;
   };
 
   return query;
@@ -68,7 +105,7 @@ export function Fabric(options) {
       return adapter;
     },
     query() {
-      return QueryFabric(connection);
+      return queryFabric(connection);
     },
   };
 
