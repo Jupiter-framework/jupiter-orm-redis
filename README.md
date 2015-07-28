@@ -28,6 +28,35 @@ let adapter = Fabric({
 
 ## Adapter API
 
+### .connect()
+
+Establish connection to DB. Returns adapter object.
+
+**Example**
+```javascript
+const orm = Fabric({
+    //options
+});
+
+orm.connect();
+```
+
+### .select(num)
+
+Switches used database.By default uses DB number passed to options object. Returns adapter object.
+
+**Arguments**
+num - {string} - id number of DB;
+
+**Example**
+```javascript
+const orm = Fabric({
+    //options
+});
+
+orm.connect().select(1);
+```
+
 ### .query()
 
 Returns Query interface of adapter
@@ -38,21 +67,7 @@ const orm = Fabric({
     //options
 });
 
-orm.query().set('key','value').get('key').set('key','value');
-```
-
-### .exec()
-
-Executes queued queries and returns Promise object.
-
-**Example**
-```javascript
-const orm = Fabric({
-    //options
-});
-
-orm.query().set('key','value').get('key');
-orm.exec().catch(function(err){throw new Error(err);});
+orm.connect().select(1).query().set('key','value').get('key').set('key','value');
 ```
 
 ## Query API
@@ -100,6 +115,5 @@ const orm = Fabric({
     //options
 });
 
-orm.query().set('key','value').get('key').exec().catch(function(err){throw new Error(err);});
+orm.connect().query().set('key','value').get('key').exec().catch(function(err){throw new Error(err);});
 ```
-
