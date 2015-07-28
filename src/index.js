@@ -94,6 +94,9 @@ export function Fabric(options) {
     query() {
       return queryFabric(connection);
     },
+    close() {
+      connection.end();
+    }
   };
 
   return adapter;
