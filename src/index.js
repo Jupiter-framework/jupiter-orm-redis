@@ -6,6 +6,16 @@ import { createClient } from 'redis';
 function queryFabric(connection) {
   const queue = [];
   const query = {};
+  const resultSet = [];
+
+  function getSet() {
+    return resultSet;
+  }
+
+  function pushToSet(item) {
+    getSet().push(item);
+    return true;
+  }
 
   const addQuery = partialRight(function(newQuery, queryQueue) {
     queryQueue.push(newQuery);
@@ -25,15 +35,17 @@ function queryFabric(connection) {
   query.exec = function() {
     return queue.reduce(function(sequence, queueItem) {
       return sequence.then(function() {
-        function replyCallback(err, reply) {
-          if (err) throw new Error(err);
-          console.log(reply);// OK
-          // return??
-        }
-        const method = queueItem[0];
-        queueItem.shift();
-        queueItem.push(replyCallback);
-        connection[method].apply(connection, queueItem);
+        return new Promise(function(resolve, reject) {
+          function queryCallback(err, reply) {
+            if (err) reject(err);
+            pushToSet(reply);
+            resolve(getSet());
+          }
+          const method = queueItem[0];
+          queueItem.shift();
+          queueItem.push(queryCallback);
+          connection[method].apply(connection, queueItem);
+        });
       });
     }, Promise.resolve(null));
   };
