@@ -3,66 +3,55 @@ import { expect, assert } from 'chai';
 import { Promise } from 'es6-promise';
 import { Fabric } from '../src/index';
 
+const testFabric = Fabric({});
+const testQuery = testFabric.query();
 
 describe('Redis ORM', function() {
   it('Fabric API spec', function() {
-    const testSubject = Fabric({});
-
-    expect(testSubject).to.have.all.keys('query', 'connect', 'select', 'getConnection');
+    expect(testFabric).to.have.all.keys('query', 'connect', 'select', 'getConnection');
 
     [
-      testSubject.query,
-      testSubject.connect,
-      testSubject.select,
-      testSubject.getConnection,
+      testFabric.query,
+      testFabric.connect,
+      testFabric.select,
+      testFabric.getConnection,
     ].forEach(function(func) {
       expect(func).to.be.ok.and.be.a('function');
     });
   });
 
   it('Query API spec', function() {
-    const query = Fabric({}).query();
-
-    expect(query).to.have.all.keys('set', 'get', 'exec', 'clearQueue', 'getQueue');
+    expect(testQuery).to.have.all.keys('set', 'get', 'exec', 'clearQueue', 'getQueue');
 
     [
-      query.set,
-      query.get,
-      query.exec,
-      query.getQueue,
-      query.clearQueue,
+      testQuery.set,
+      testQuery.get,
+      testQuery.exec,
+      testQuery.getQueue,
+      testQuery.clearQueue,
     ].forEach(function(func) {
       expect(func).to.be.ok.and.be.a('function');
     });
   });
 
   it('Connection should be estabilished', function(done) {
-    const ORM = Fabric({
-      port: 6379,
-      host: 'localhost',
-    });
+    testFabric.connect();
 
-    ORM.connect();
-
-    ORM.getConnection().on('ready', function() {
-      assert.ok(ORM.getConnection().connected, 'connected client');
-      ORM.getConnection().end();
+    testFabric.getConnection().on('ready', function() {
+      assert.ok(testFabric.getConnection().connected, 'connected client');
+      testFabric.getConnection().end();
       done();
     });
   });
 
   it('exec() should return Promise', function() {
-    const promise = Fabric({
-      port: 6379,
-      host: 'localhost',
-    }).connect().select(1).query().get('test').exec();
+    const promise = testFabric.connect().select(1).query().get('test').exec();
 
     expect(promise.then).to.be.ok.and.to.be.a('function');
   });
 
   describe('Queue manipulation API', function() {
     it('get() and set() functions should add queries to the queue', function() {
-      const query = Fabric({}).query();
       const expectedQueue = [
         [
           'set',
@@ -75,9 +64,9 @@ describe('Redis ORM', function() {
         ],
       ];
 
-      query.set('key', 'value').get('key');
+      testQuery.set('key', 'value').get('key');
 
-      expect(query.getQueue()).to.be.ok.and.to.be.eql(expectedQueue);
+      expect(testQuery.getQueue()).to.be.ok.and.to.be.eql(expectedQueue);
     });
 
     it('clearQueue() should clear the contents of queue', function() {
@@ -110,10 +99,14 @@ describe('Redis ORM', function() {
 
       [
         adapter.connect(),
-        adapter.select(),
+        adapter.select(1),
       ].forEach(function(object) {
         expect(object).to.be.ok.and.to.be.eql(adapter);
       });
     });
+  });
+
+  after(function () {
+    testFabric.getConnection().end();
   });
 });
