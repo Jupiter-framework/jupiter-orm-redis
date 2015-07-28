@@ -16,7 +16,6 @@ options - {object} - object with connection settings as properties
 Available options:
 * hostname - {string} - host name without protocol, e.g. '127.0.0.1';
 * port - {number} - port of host server to connect;
-* password - {string} - password for DB authorization;
 * database - {number} - number of Redis DB to query.
 
 **Example**
@@ -25,8 +24,7 @@ Available options:
 let adapter = Fabric({
     host : "127.0.0.1",
     port : 6379,
-    password: 'password',
-    database: 0
+    database: 0,
 });
 ```
 
@@ -74,6 +72,22 @@ const orm = Fabric({
 orm.connect().select(1).query().set('key','value').get('key').set('key','value');
 ```
 
+### .close()
+
+Closes current connection.
+
+**Example**
+```javascript
+const orm = Fabric({
+    //options
+});
+
+orm.connect().select(1).query().set('key','value').exec().then(function(result) {
+    doSomething(result);
+    orm.close();
+}).catch(function(err) {throw new Error(err)});
+```
+
 ## Query API
 
 ### .set(key, value)
@@ -90,7 +104,10 @@ const orm = Fabric({
     //options
 });
 
-orm.query().set('key','value').exec().catch(function(err){throw new Error(err);});
+orm.query().set('key','value').exec().then(function(result) {
+    doSomethingWithResult(result);
+    orm.close();
+}).catch(function(err){throw new Error(err);});
 ```
 
 ### .get(key)
@@ -106,7 +123,10 @@ const orm = Fabric({
     //options
 });
 
-orm.query().get('key').exec().catch(function(err){throw new Error(err);});
+orm.query().get('key').exec().then(function(result) {
+    doSomethingWithResult(result);
+    orm.close();
+}).catch(function(err){throw new Error(err);});
 ```
 
 ### .exec()
@@ -119,5 +139,8 @@ const orm = Fabric({
     //options
 });
 
-orm.connect().query().set('key','value').get('key').exec().catch(function(err){throw new Error(err);});
+orm.connect().query().set('key','value').get('key').exec().then(function(result) {
+    doSomethingWithResult(result);
+    orm.close();
+}).catch(function(err){throw new Error(err);});
 ```

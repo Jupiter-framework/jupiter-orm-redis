@@ -8,11 +8,12 @@ const testQuery = testFabric.query();
 
 describe('Redis ORM', function() {
   it('Fabric API spec', function() {
-    expect(testFabric).to.have.all.keys('query', 'connect', 'select', 'getConnection');
+    expect(testFabric).to.have.all.keys('query', 'connect', 'select', 'getConnection', 'close');
 
     [
       testFabric.query,
       testFabric.connect,
+      testFabric.close,
       testFabric.select,
       testFabric.getConnection,
     ].forEach(function(func) {
