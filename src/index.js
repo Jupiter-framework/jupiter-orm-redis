@@ -35,17 +35,30 @@ function queryFabric(connection) {
   query.exec = function() {
     return queue.reduce(function(sequence, queueItem) {
       return sequence.then(function() {
+        const method = queueItem[0];
+
+        queueItem.shift();
+
+        if (typeof queueItem[queueItem.length - 1] !== 'function') {
+          Promise.resolve(
+            connection[method].apply(connection, queueItem)
+          );
+        }
+
         return new Promise(function(resolve, reject) {
-          function queryCallback(err, reply) {
-            if (err) reject(err);
-            pushToSet(reply);
-            resolve(getSet());
-          }
-          const method = queueItem[0];
-          queueItem.shift();
-          queueItem.push(queryCallback);
-          connection[method].apply(connection, queueItem);
+          queueItem[queueItem.length - 1] = function (err, reply) {
+            if (err) {
+              return reject(err);
+            }
+
+            return resolve(reply);
+          };
+
+          Promise.resolve(
+            connection[method].apply(connection, queueItem)
+          );
         });
+
       });
     }, Promise.resolve(null));
   };
